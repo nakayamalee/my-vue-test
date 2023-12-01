@@ -4,22 +4,22 @@
   import editProductModel from '@/components/Modal/EditProductModal.vue';
   import { useProductStore } from '@/stores/useProductStore.js';
 
-  const keyInput = ref([]);
-  const key = ref('');
   const openModal = ref('');
-  const productData = ref({});
-
   const addItem = () => {
     openModal.value = 'creareProdcut';
   }
 
+  const productData = ref({});
   const editProduct = (item) => {
     openModal.value = 'editProdcut';
     productData.value = { ...item };
   };
+
   const store = useProductStore();
   const { list, searchList } = store;
 
+  const key = ref('');
+  const keyInput = ref([]);
   const search = () => {
     key.value = keyInput.value.value;
   };
