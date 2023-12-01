@@ -1,5 +1,5 @@
 <script setup>
-  import { reactive } from 'vue';
+  import { ref, reactive, computed } from 'vue';
   import { useProductStore } from '@/stores/useProductStore.js';
   import { twMerge } from 'tailwind-merge';
 
@@ -14,6 +14,9 @@
     link: '',
     image: '',
   });
+
+  const myForm = ref([]);
+  const isPending = ref(false);
 
   const store = useProductStore();
 
@@ -41,18 +44,20 @@
   <div id="custom-modal">
     <div class="modal-body">
       <h1 class="mb-6">新增資訊</h1>
-      <form class="grid grid-cols-2 gap-6" @submit.prevent="submitData()">
+      <form :class="{ 'pending': isPending }" class="grid grid-cols-2 gap-6" @submit.prevent="submitData()">
         <label>
-          <p>廣告標題<span class="text-[red]">*</span></p>
-          <input v-model="formData.title" v-focus class="border border-black" type="text" required>
+          <p class="required">廣告標題</p>
+          <input v-model="formData.title" v-focus name="title" class="border border-black" type="text" required>
+          <p class="text-[red] hidden">請輸入廣告標題</p>
         </label>
         <label>
-          <p>廣告狀態<span class="text-[red]">*</span></p>
-          <select v-model="formData.state" class="border border-black" required>
+          <p class="required">廣告狀態</p>
+          <select v-model="formData.state" name="state" class="border border-black" required>
             <option value="" selected disabled>請選擇廣告狀態</option>
             <option value="1">啟用</option>
             <option value="2">關閉</option>
           </select>
+          <p class="text-[red] hidden">請選擇廣告狀態</p>
         </label>
         <label class="col-span-2">
           廣告連結
@@ -67,7 +72,7 @@
           </label>
         </div>
         <div class="btns col-span-2">
-          <button type="submit">儲存</button>
+          <button type="submit" @click="isPending = true">儲存</button>
           <button type="button" @click="closeModal()">取消</button>
         </div>
       </form>
@@ -87,6 +92,16 @@
         @apply flex flex-col gap-1;
         input, select {
           @apply h-[35px] pl-3;
+        }
+      }
+      .required {
+        @apply after:content-['*'] after:text-[red];
+      }
+      .pending :invalid {
+        @apply border-[red] outline-[red];
+
+        & + p {
+          @apply block;
         }
       }
       .btns {
