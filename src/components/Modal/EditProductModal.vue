@@ -1,28 +1,37 @@
 <script setup>
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, defineProps } from 'vue';
   import { useProductStore } from '@/stores/useProductStore.js';
   import { twMerge } from 'tailwind-merge';
+
+  const props = defineProps({
+    formData: {
+      type: Object,
+      required: false,
+      default: {
+        id: 0,
+        title: '',
+        state: '',
+        link: '',
+        image: '',
+      },
+    },
+  });
 
   const vFocus = {
     mounted: (el) => el.focus(),
   };
   const emit = defineEmits(['closeModal']);
 
-  const formData = reactive({
-    title: '',
-    state: '',
-    link: '',
-    image: '',
-  });
+  const formData = reactive(props.formData);
 
   const isPending = ref(false);
 
   const store = useProductStore();
 
-  const { addProduct } = store;
+  const { updateProduct } = store;
 
   async function submitData() {
-    await addProduct(formData);
+    await updateProduct(formData);
     closeModal();
   }
 
@@ -42,7 +51,7 @@
 <template>
   <div id="custom-modal">
     <div class="modal-body">
-      <h1 class="mb-6">新增資訊</h1>
+      <h1 class="mb-6">編輯資訊</h1>
       <form :class="{ 'pending': isPending }" class="grid grid-cols-2 gap-6" @submit.prevent="submitData()">
         <label>
           <p class="required">廣告標題</p>

@@ -1,15 +1,22 @@
 <script setup>
   import { ref, computed } from 'vue';
   import productModel from '@/components/Modal/CreateProductModal.vue';
+  import editProductModel from '@/components/Modal/EditProductModal.vue';
   import { useProductStore } from '@/stores/useProductStore.js';
 
   const keyInput = ref([]);
   const key = ref('');
   const openModal = ref('');
+  const productData = ref({});
 
   const addItem = () => {
     openModal.value = 'creareProdcut';
   }
+
+  const editProduct = (item) => {
+    openModal.value = 'editProdcut';
+    productData.value = { ...item };
+  };
   const store = useProductStore();
   const { list, searchList } = store;
 
@@ -41,7 +48,7 @@
         <tr>
           <th class="text-left px-4 w-[300px]">圖片</th>
           <th class="text-left px-4">標題</th>
-          <th>功能</th>
+          <th class="w-[100px]">功能</th>
         </tr>
       </thead>
       <tbody>
@@ -52,12 +59,13 @@
           </td>
           <td class="px-4">{{ item.title }}</td>
           <td class="text-center">
-            <button type="button">按鈕</button>
+            <button type="button" class="border border-black rounded-md px-4 py-2 hover:bg-[#48b380] hover:text-white" @click="editProduct(item)">編輯</button>
           </td>
         </tr>
       </tbody>
     </table>
     <productModel v-if="openModal === 'creareProdcut'" @close-modal="openModal = ''"></productModel>
+    <editProductModel v-if="openModal === 'editProdcut'" :form-data="productData" @close-modal="openModal = ''"></editProductModel>
   </section>
 </template>
 
