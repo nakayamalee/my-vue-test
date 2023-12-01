@@ -15,7 +15,6 @@
     image: '',
   });
 
-  const myForm = ref([]);
   const isPending = ref(false);
 
   const store = useProductStore();
@@ -64,12 +63,16 @@
           <input v-model="formData.link" class="border border-black" type="text">
         </label>
         <div id="image" class="col-span-2">
-          廣告圖片
-          <label class="w-1/2 aspect-[4/3] border border-black flex justify-center items-center cursor-pointer rounded-md" :class="twMerge('border-dashed', formData.image ? 'border-solid' : '')">
-            <span v-if="!formData.image" class="text-[72px] text-bold text-[grey]">+</span>
-            <img v-else :src="formData.image" class="w-full h-full object-contain" alt="廣告圖片">
-            <input class="hidden" type="file" @change="getImage">
-          </label>
+          <p class="required">廣告圖片</p>
+          <input id="imageInput" class="hidden" type="file" @change="getImage">
+          <div class="relative w-1/2 h-full aspect-[4/3] ">
+            <input v-model="formData.image" type="text" class="h-[10px] w-[10px] opacity-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 !p-0 absolute" required @change="getImage">
+            <label :class="twMerge('border-dashed', formData.image ? 'border-solid' : '')" for="imageInput" class="w-full h-full border border-black flex justify-center items-center cursor-pointer rounded-md">
+              <span v-if="!formData.image" class="text-[72px] text-bold text-[grey]">+</span>
+              <img v-else :src="formData.image" class="w-full h-full object-contain" alt="廣告圖片">
+            </label>
+            <p class="text-[red] hidden">請選擇廣告圖片</p>
+          </div>
         </div>
         <div class="btns col-span-2">
           <button type="submit" @click="isPending = true">儲存</button>
@@ -97,10 +100,10 @@
       .required {
         @apply after:content-['*'] after:text-[red];
       }
-      .pending :invalid {
-        @apply border-[red] outline-[red];
+      .pending :invalid, .pending :invalid + label {
+        @apply border-[red] outline-[red] border-solid;
 
-        & + p {
+        & + p, & + label + p {
           @apply block;
         }
       }

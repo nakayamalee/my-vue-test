@@ -1,8 +1,9 @@
 <script setup>
-  import { ref } from 'vue';
+  import { ref, computed } from 'vue';
   import productModel from '@/components/Modal/CreateProductModal.vue';
   import { useProductStore } from '@/stores/useProductStore.js';
 
+  const keyInput = ref([]);
   const key = ref('');
   const openModal = ref('');
 
@@ -10,7 +11,16 @@
     openModal.value = 'creareProdcut';
   }
   const store = useProductStore();
-  const { list } = store;
+  const { list, searchList } = store;
+
+  const search = () => {
+    key.value = keyInput.value.value;
+  };
+
+  const showList = computed(() => {
+    if (key.value.trim() === '') return list;
+    return searchList(key.value);
+  });
 </script>
 
 <template>
@@ -19,10 +29,10 @@
     <div class="search">
       <div>查詢產品</div>
       <label>
-        標題<input v-model="key" type="text" placeholder="輸入標題關鍵字">
+        標題<input ref="keyInput" type="text" placeholder="輸入標題關鍵字" @keydown.enter="search()">
       </label>
       <div class="btns">
-        <button type="button">查詢</button>
+        <button type="button" @click="search()">查詢</button>
         <button type="button" @click="addItem()">新增</button>
       </div>
     </div>
@@ -35,7 +45,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in list" :key="index">
+        <tr v-for="(item, index) in showList" :key="index">
           <td class="px-4">
             <img v-if="item.image" :src="item.image" :alt="item.title" class="w-full aspect-video object-contain">
             <span v-else>無設置圖片</span>
