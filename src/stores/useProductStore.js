@@ -4,6 +4,11 @@ import { defineStore } from 'pinia';
 export const useProductStore = defineStore('products', () => {
   const id = ref(1);
   const list = ref([]);
+  fetch('http://localhost:3000/productList')
+    .then((res) => res.json())
+    .then((data) => {
+      list.value = data;
+    });
 
   const activeList = computed(() => list.value.filter((item) => item.state === '1'));
 
@@ -16,6 +21,13 @@ export const useProductStore = defineStore('products', () => {
     if (Object.keys(item).length === 0) return;
     list.value.push({ id: id.value, ...item });
     id.value++;
+    fetch(`http://localhost:3000/productList`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id: id.value, ...item }),
+    })
   }
 
   function updateProduct(data = {}) {
