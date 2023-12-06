@@ -13,7 +13,6 @@ import { Pagination, Navigation } from 'swiper/modules';
 
 const modules = [Pagination, Navigation];
 const store = useProductStore();
-const { activeList } = store;
 
 </script>
 
@@ -23,7 +22,7 @@ const { activeList } = store;
     <swiper :pagination="{
       type: 'progressbar',
     }" :navigation="true" :modules="modules" class="mySwiper w-full aspect-video">
-      <swiper-slide v-for="(item, index) in activeList" :key="index" class="relative">
+      <swiper-slide v-for="(item, index) in store.activeList" :key="index" class="relative">
         <img :src="item.image" :alt="item.title" :title="item.title" class="w-full h-full object-contain">
         <a v-if="item.link" :href="item.link" class="hidden absolute left-[20%] bottom-[20%] bg-white px-4 py-2 aspect-[2/1] rounded-md md:block">{{ item.title }}</a>
         <p v-else class="hidden absolute left-[20%] bottom-[20%] bg-white px-4 py-2 aspect-[2/1] rounded-md md:block">{{ item.title }}</p>

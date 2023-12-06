@@ -2,7 +2,6 @@ import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 
 export const useProductStore = defineStore('products', () => {
-  const id = ref(1);
   const list = ref([]);
 
   const getList = () => {
@@ -10,6 +9,7 @@ export const useProductStore = defineStore('products', () => {
       .then((res) => res.json())
       .then((data) => {
         list.value = data;
+        console.log(data);
       });
   };
 
@@ -40,6 +40,13 @@ export const useProductStore = defineStore('products', () => {
     });
     if (dataIndex < 0) return;
     list.value[dataIndex] = { ...data };
+    fetch(`http://localhost:3000/productList/${data.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+    })
   }
 
   function deleteProduct(id) {

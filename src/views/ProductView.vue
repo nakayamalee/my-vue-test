@@ -18,7 +18,7 @@
 
   
   const store = useProductStore();
-  const { list, searchList, deleteProduct } = store;
+  const { searchList, deleteProduct } = store;
   
   const removeItem = (id) => {
     Swal.fire({
@@ -45,7 +45,7 @@
   };
 
   const showList = computed(() => {
-    if (key.value.trim() === '') return list;
+    if (key.value.trim() === '') return store.list;
     return searchList(key.value);
   });
 </script>
