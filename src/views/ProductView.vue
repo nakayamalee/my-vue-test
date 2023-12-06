@@ -53,7 +53,6 @@
 <template>
   <section id="product-list">
     <h1 class="text-[36px] text-bold mb-10">Product</h1>
-    {{ list }}
     <div class="search">
       <div>查詢產品</div>
       <label>
