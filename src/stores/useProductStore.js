@@ -4,11 +4,16 @@ import { defineStore } from 'pinia';
 export const useProductStore = defineStore('products', () => {
   const id = ref(1);
   const list = ref([]);
-  fetch('http://localhost:3000/productList')
-    .then((res) => res.json())
-    .then((data) => {
-      list.value = data;
-    });
+
+  const getList = () => {
+    fetch('http://localhost:3000/productList')
+      .then((res) => res.json())
+      .then((data) => {
+        list.value = data;
+      });
+  };
+
+  getList();
 
   const activeList = computed(() => list.value.filter((item) => item.state === '1'));
 
@@ -19,15 +24,14 @@ export const useProductStore = defineStore('products', () => {
 
   function addProduct(item = {}) {
     if (Object.keys(item).length === 0) return;
-    list.value.push({ id: id.value, ...item });
-    id.value++;
     fetch(`http://localhost:3000/productList`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ id: id.value, ...item }),
+      body: JSON.stringify(item),
     })
+    .then(() => getList());
   }
 
   function updateProduct(data = {}) {
@@ -38,5 +42,15 @@ export const useProductStore = defineStore('products', () => {
     list.value[dataIndex] = { ...data };
   }
 
-  return { list, activeList, addProduct, searchList, updateProduct }
+  function deleteProduct(id) {
+    fetch(`http://localhost:3000/productList/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+    .then(() => getList())
+  }
+
+  return { list, activeList, addProduct, searchList, updateProduct, deleteProduct }
 })

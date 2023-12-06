@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "pinia": "^2.1.7",
+    "sweetalert2": "^11.10.1",
     "swiper": "^11.0.5",
     "tailwind-merge": "^2.0.0",
     "vue": "^3.3.4",

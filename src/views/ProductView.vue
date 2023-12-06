@@ -3,6 +3,7 @@
   import productModel from '@/components/Modal/CreateProductModal.vue';
   import editProductModel from '@/components/Modal/EditProductModal.vue';
   import { useProductStore } from '@/stores/useProductStore.js';
+  import Swal from 'sweetalert2'
 
   const openModal = ref('');
   const addItem = () => {
@@ -15,8 +16,27 @@
     productData.value = { ...item };
   };
 
+  
   const store = useProductStore();
-  const { list, searchList } = store;
+  const { list, searchList, deleteProduct } = store;
+  
+  const removeItem = (id) => {
+    Swal.fire({
+      title: "確認刪除?",
+      showDenyButton: true,
+      confirmButtonText: "刪除",
+      denyButtonText: `取消`
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        Swal.fire("已刪除", "", "success");
+        deleteProduct(id);
+      } else if (result.isDenied) {
+        Swal.fire("未刪除");
+      }
+    });
+    // deleteProduct(id);
+  };
 
   const key = ref('');
   const keyInput = ref([]);
@@ -33,6 +53,7 @@
 <template>
   <section id="product-list">
     <h1 class="text-[36px] text-bold mb-10">Product</h1>
+    {{ list }}
     <div class="search">
       <div>查詢產品</div>
       <label>
@@ -60,6 +81,7 @@
           <td class="px-4">{{ item.title }}</td>
           <td class="text-center">
             <button type="button" class="border border-black rounded-md px-4 py-2 hover:bg-[#48b380] hover:text-white" @click="editProduct(item)">編輯</button>
+            <button type="button" class="border border-black rounded-md px-4 py-2 hover:bg-[red] hover:text-white" @click="removeItem(item.id)">刪除</button>
           </td>
         </tr>
       </tbody>
