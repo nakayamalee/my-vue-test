@@ -3,7 +3,7 @@
   import productModel from '@/components/Modal/CreateProductModal.vue';
   import editProductModel from '@/components/Modal/EditProductModal.vue';
   import { useProductStore } from '@/stores/useProductStore.js';
-  import Swal from 'sweetalert2'
+  import Swal from 'sweetalert2';
 
   const openModal = ref('');
   const addItem = () => {
@@ -39,15 +39,10 @@
   };
 
   const key = ref('');
-  const keyInput = ref([]);
   const search = () => {
-    key.value = keyInput.value.value;
+    searchList(key.value);
   };
-
-  const showList = computed(() => {
-    if (key.value.trim() === '') return store.list;
-    return searchList(key.value);
-  });
+  
 </script>
 
 <template>
@@ -56,7 +51,7 @@
     <div class="search">
       <div>查詢產品</div>
       <label>
-        標題<input ref="keyInput" type="text" placeholder="輸入標題關鍵字" @keydown.enter="search()">
+        標題<input v-model="key" type="text" placeholder="輸入標題關鍵字" @keydown.enter="search()">
       </label>
       <div class="btns">
         <button type="button" @click="search()">查詢</button>
@@ -72,7 +67,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in showList" :key="index">
+        <tr v-for="(item, index) in store.list" :key="index">
           <td class="px-4">
             <img v-if="item.image" :src="item.image" :alt="item.title" class="w-full aspect-video object-contain">
             <span v-else>無設置圖片</span>

@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
+import Swal from 'sweetalert2';
 
 export const useProductStore = defineStore('products', () => {
   const list = ref([]);
@@ -10,6 +11,9 @@ export const useProductStore = defineStore('products', () => {
       .then((data) => {
         list.value = data;
         console.log(data);
+      })
+      .catch(() => {
+        Swal.fire('請參閱README');
       });
   };
 
@@ -17,10 +21,14 @@ export const useProductStore = defineStore('products', () => {
 
   const activeList = computed(() => list.value.filter((item) => item.state === '1'));
 
-  const searchList = (key = '') => list.value.filter((item) => {
-    if (key.trim() === '') return true;
-    return item.title.includes(key);
-  });
+  const searchList = (key = '') => {
+    fetch(`http://localhost:3000/productList?title_like=${key}`)
+      .then((res) => res.json())
+      .then((data) => {
+        list.value = data;
+        console.log(data);
+      })
+  };
 
   function addProduct(item = {}) {
     if (Object.keys(item).length === 0) return;
@@ -31,7 +39,10 @@ export const useProductStore = defineStore('products', () => {
       },
       body: JSON.stringify(item),
     })
-    .then(() => getList());
+    .then(() => getList())
+    .catch(() => {
+      Swal.fire('請參閱README');
+    });
   }
 
   function updateProduct(data = {}) {
@@ -47,6 +58,9 @@ export const useProductStore = defineStore('products', () => {
       },
       body: JSON.stringify(data),
     })
+    .catch(() => {
+      Swal.fire('請參閱README');
+    });
   }
 
   function deleteProduct(id) {
@@ -56,7 +70,13 @@ export const useProductStore = defineStore('products', () => {
         'Content-Type': 'application/json'
       },
     })
-    .then(() => getList())
+    .then(() => {
+      const index = list.value.findIndex((item) => item.id === id);
+      list.value.splice(index, 1)
+    })
+    .catch(() => {
+      Swal.fire('請參閱README');
+    });
   }
 
   return { list, activeList, addProduct, searchList, updateProduct, deleteProduct }
